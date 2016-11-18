@@ -1,0 +1,83 @@
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
+public class To_overcom_HuU extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					To_overcom_HuU frame = new To_overcom_HuU();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public To_overcom_HuU() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1232, 944);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 192, 203));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		// contentPane.setLayout(null);
+
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(255, 255, 255));
+		contentPane.add(panel);
+
+		JPanel panel_3 = new JPanel();
+		panel.add(panel_3);
+
+		// JCheckBox typeOfFood = new JCheckBox("\uD55C\uC2DD");
+		JCheckBox[] typeOfFood = new JCheckBox[4];
+		String[] typeoffood = { "한식", "중식", "일식", "분식" };
+
+		int i = 0;
+		for (i = 0; i < 4; i++) {
+			typeOfFood[i] = new JCheckBox(typeoffood[i]);
+			typeOfFood[i].setBackground(Color.green);
+			panel_3.add(typeOfFood[i]);
+		}
+
+		JPanel panel_4 = new JPanel();
+		panel.add(panel_4);
+
+		JCheckBox priority1 = new JCheckBox("추천순");
+		panel_4.add(priority1);
+
+		JCheckBox priority2 = new JCheckBox("거리순");
+		panel_4.add(priority2);
+
+		JCheckBox priority3 = new JCheckBox("가격순");
+		panel_4.add(priority3);
+
+		JPanel panel_1 = new JPanel();
+		contentPane.add(panel_1);
+
+		JButton btnNewButton = new JButton("");
+		btnNewButton.setSelectedIcon(new ImageIcon(
+				"C:\\Users\\\uC720\uAC00\uC740\\Desktop\\\uCE74\uD1A1\uBC1B\uC740\uD30C\uC77C\\\uADF8\uB9BC1.png"));
+		panel_1.add(btnNewButton);
+
+		JLabel lblNewLabel = new JLabel("혼자오셨어요...?");
+		panel_1.add(lblNewLabel);
+
+		JPanel panel_2 = new JPanel();
+		contentPane.add(panel_2);
+	}
+
+}
