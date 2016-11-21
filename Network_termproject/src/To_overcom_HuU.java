@@ -26,34 +26,44 @@ public class To_overcom_HuU extends JFrame {
 	 * Create the frame.
 	 */
 	public To_overcom_HuU() {
+		Font font;
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 2200, 1400);
-		contentPane = new JPanel();
-		contentPane.setBackground(new Color(255, 192, 203));
+		contentPane = new JPanel() {
+			Image bg = new ImageIcon("배경.png").getImage();
+
+			@Override
+			public void paintComponent(Graphics g) {
+				g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
+			}
+		};
+		//contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
+		//left panel(음식종류,음식,가격제한선)
 		JPanel panel1 = new JPanel();
-		panel1.setBackground(new Color(255, 255, 255));
+		panel1.setBackground(UIManager.getColor("Button.background"));
 		panel1.setLayout(null);
-		panel1.setBounds(200, 100, 700, 1100);
+		panel1.setBounds(200, 175, 700, 1025);
 		contentPane.add(panel1);
 
+			//음식종류
 		JPanel foodtypePanel = new JPanel();
-		foodtypePanel.setBackground(new Color(250, 240, 230, 0));
-		Font f = new Font("돋움", Font.PLAIN, 30);
-		foodtypePanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "음식종류", TitledBorder.LEFT,
-				TitledBorder.TOP, null, new Color(138, 43, 226)));
+		foodtypePanel.setBackground(new Color(102,153,0,150));
+		font=new Font("돋움",Font.BOLD,40);
+		foodtypePanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "음식종류", TitledBorder.LEFT, TitledBorder.TOP, font, Color.black));
 		foodtypePanel.setBounds(50, 50, 600, 200);
 		foodtypePanel.setLayout(null);
 		panel1.add(foodtypePanel);
 
-		JPanel checkboxPanel = new JPanel();
+		/*JPanel checkboxPanel = new JPanel();
 		checkboxPanel.setBorder(null);
 		checkboxPanel.setLayout(null);
-		checkboxPanel.setBackground(new Color(255, 228, 225));
-		checkboxPanel.setBounds(50, 50, 500, 90);
+		checkboxPanel.setBackground(new Color(173, 255, 47));
+		checkboxPanel.setBounds(50, 50, 500, 90);*/
 
 		JCheckBox[] typeOfFood = new JCheckBox[5];
 		String[] typeoffood = { "한식", "중식", "일식", "분식", "전체" };
@@ -61,41 +71,45 @@ public class To_overcom_HuU extends JFrame {
 		int i = 0;
 		for (i = 0; i < 5; i++) {
 			typeOfFood[i] = new JCheckBox(typeoffood[i]);
-			typeOfFood[i].setBounds(50 + (70 * i + 20), 30, 70, 30);
+			typeOfFood[i].setBounds(50 + (90 + 10) * i, 80, 90, 50);
 			typeOfFood[i].setBorderPainted(true);
-			typeOfFood[i].setFont(new Font("돋움", Font.CENTER_BASELINE, 20));
+			typeOfFood[i].setFont(new Font("돋움", Font.CENTER_BASELINE, 30));
 			typeOfFood[i].setBackground(new Color(250, 250, 250, 250));
-			checkboxPanel.add(typeOfFood[i]);
+			foodtypePanel.add(typeOfFood[i]);
 		}
-		foodtypePanel.add(checkboxPanel);
+		//foodtypePanel.add(checkboxPanel);
 
+			//우선순위
 		JPanel priorityPanel = new JPanel();
-		priorityPanel.setBackground(new Color(250, 240, 230, 0));
-		priorityPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "우선순위", TitledBorder.LEFT,
-				TitledBorder.TOP, null, new Color(75, 0, 130)));
-		priorityPanel.setBounds(50, 350, 600, 200);
+		priorityPanel.setBackground(new Color(0x8FBC8F));
+		priorityPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "우선순위", TitledBorder.LEFT, TitledBorder.TOP, font, Color.black));
+		priorityPanel.setBounds(50, 275, 600, 200);
 		priorityPanel.setLayout(null);
 
 		JComboBox priority = new JComboBox();
 		priority.setBackground(new Color(255, 228, 225));
 		priority.setBounds(200, 70, 200, 60);
 		priority.setEditable(false);
-		priority.setModel(new DefaultComboBoxModel(new String[] { "추천순", "거리순", "가격순" }));
-		priority.setSelectedIndex(-1);
-		priority.setMaximumRowCount(3);
+		priority.setModel(new DefaultComboBoxModel(new String[] { "선택하세요","추천순", "거리순", "가격순" }));
+		priority.setFont(new Font("돋움", Font.PLAIN, 30));
+		priority.setSelectedIndex(0);
+		priority.setMaximumRowCount(4);
 		priority.setForeground(new Color(0, 0, 0));
 		priorityPanel.add(priority);
 
 		panel1.add(priorityPanel);
 
+			//가격제한선
 		JPanel pricerangePanel = new JPanel();
-		pricerangePanel.setBackground(new Color(250, 240, 230));
-		pricerangePanel.setBounds(50, 650, 600, 400);
+		pricerangePanel.setBackground(new Color(0xEAEAEA));
+		pricerangePanel.setBounds(50, 500, 600, 470);
 		panel1.add(pricerangePanel);
 
+		
+		//Center Panel(혼밥버튼)
 		JPanel panel2 = new JPanel();
 		panel2.setSize(250, 200);
-		panel2.setLocation(950, 1000);
+		panel2.setLocation(896, 1002);
 		panel2.setBackground(new Color(3, 3, 3, 0));
 		contentPane.add(panel2);
 
@@ -110,22 +124,61 @@ public class To_overcom_HuU extends JFrame {
 		btLabel.setVerticalAlignment(SwingConstants.BOTTOM);
 		panel2.add(btLabel, BorderLayout.CENTER);
 
+		
+		//Right Panel(선택된 음식종류, 선택된 음식, 식당정보)
 		JPanel panel3 = new JPanel();
-		panel3.setSize(700, 1100);
-		panel3.setLocation(1250, 100);
+		panel3.setBackground(UIManager.getColor("Button.background"));
+		panel3.setSize(700, 1025);
+		panel3.setLocation(1247, 175);
 		contentPane.add(panel3);
 		panel3.setLayout(null);
 
+			//선택된 음식종류
 		JPanel selectedFoodtype = new JPanel();
-		selectedFoodtype.setBounds(250, 50, 250, 150);
+		selectedFoodtype.setBounds(87, 50, 522, 150);
 		panel3.add(selectedFoodtype);
+		selectedFoodtype.setLayout(null);
 
+		JLabel redTr = new JLabel(new ImageIcon(
+				((new ImageIcon("그림2.png")).getImage()).getScaledInstance(130, 60, java.awt.Image.SCALE_SMOOTH)));
+		redTr.setBounds(196, 0, 154, 44);
+		redTr.setBackground(null);
+		selectedFoodtype.add(redTr);
+
+		JLabel blackRec = new JLabel(new ImageIcon(
+				((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+		blackRec.setBounds(96, 40, 347, 106);
+		blackRec.setBackground(null);
+		selectedFoodtype.add(blackRec);
+
+			//선택된 음식
 		JPanel selectedFood = new JPanel();
-		selectedFood.setBounds(250, 250, 250, 150);
+		selectedFood.setBounds(87, 230, 522, 150);
 		panel3.add(selectedFood);
+		selectedFood.setLayout(null);
 
-		JPanel restaurant = new JPanel();
-		restaurant.setBounds(50, 450, 600, 600);
+		JLabel redT = new JLabel(new ImageIcon(
+				((new ImageIcon("그림2.png")).getImage()).getScaledInstance(130, 60, java.awt.Image.SCALE_SMOOTH)));
+		redT.setBounds(201, 0, 154, 44);
+		redT.setBackground(null);
+		selectedFood.add(redT);
+
+		JLabel blackR = new JLabel(new ImageIcon(
+				((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+		blackR.setBounds(96, 40, 347, 106);
+		blackR.setBackground(null);
+		selectedFood.add(blackR);
+
+			//식당정보
+		JPanel restaurant = new JPanel() {
+			Image bg = new ImageIcon("그림1.png").getImage();
+
+			@Override
+			public void paintComponent(Graphics g) {
+				g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
+			}
+		};
+		restaurant.setBounds(47, 400, 600, 600);
 		panel3.add(restaurant);
 	}
 }
