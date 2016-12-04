@@ -23,6 +23,10 @@ public class Select {
 
    Select(int[] type, int m)// , int type[])
    {
+		Type = -1;
+		Food = -1;
+		Desc = -1;
+	   
       System.arraycopy(type, 0, TypeList, 0, 4);
       menu = m;
       System.out.println("select: " + TypeList[0]);
@@ -43,7 +47,7 @@ public class Select {
 
       // int Type, Food, Desc;
 
-      String url = "jdbc:mysql://localhost:3306/termp?useUnicode=true&characterEncoding=EUC_KR";
+      String url = "jdbc:mysql://localhost:3306/termp?useUnicode=true&characterEncoding=UTF-8";//EUC_KR
       String user = "root";
       String pass = "12345";
       try {

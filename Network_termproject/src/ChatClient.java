@@ -1,5 +1,3 @@
-
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -191,49 +189,60 @@ public class ChatClient{
         out = new PrintWriter(socket.getOutputStream(), true); //서버로 데이터를 보내는 output stream
         
      
-        while (true) 
-        {
-            String line = in.readLine(); //서버로부터 데이터를 읽어와서 line string에 저장함
-            if (line.startsWith("SUBMITNAME")) //서버로부터 읽어온 데이터가 SUBMITNAME으로 시작하면
-            {
-               name = getName(); // getName()함수를 호출해서 클라이언트의 이름을 입력받음
-               textName.setText(name);
-                out.println(name); // 입력 받은 이름을 서버에 보내줌
-             
-            } 
-            else if (line.startsWith("NAMEACCEPTED")) //서버로부터 읽어온 데이터가 NAMEACCEPTED로 시작하면
-            {
-                textField.setEditable(true); //이제 textField가 수정 가능해짐
-            } 
-            else if(line.startsWith("ENTRANCE"))//서버로부터 읽어온 데이터가 ENTRANCE로 시작하면
-            {
-               messageArea.append("<"+line.substring(8)+">"+"님이 입장하셨습니다.\n"); //읽어온 데이터의 8글자 뒤부터가 이름이기 때문에 messageArea에 <name> ENTRANCE란 메세지를 첨부한다. 
-               
-            }
-            else if(line.startsWith("WHISPER")) //서버로부터 읽어온 데이터가 WHISPER로 시작하면
-            {
-               
-               messageArea.append(line.substring(7)+"\n");//읽어온 데이터의 7글자 뒤부터가 "보내는 사람의 이름: message" format이기 때문에 messageArea에 첨부한다.
-            }
-            else if (line.startsWith("MESSAGE")) 
-            {
-                messageArea.append(line.substring(8) + "\n"); //읽어온 데이터의 8글자 뒤부터가 message이기 때문에 messageArea에 첨부한다.
-            }
-            else if(line.startsWith("EXIT")) //서버로부터 읽어온 데이터가 EXIT로 시작하면
-            {
-               messageArea.append("<"+line.substring(4)+">"+"님이 나가셨습니다."+"\n"); //읽어온 데이터의 4글자 뒤부터가 종료하는 클라이언트의 name이기 때문에 messageArea에 첨부한다.
-            }
-        } 
+//        while (true) 
+//        {
+//            String line = in.readLine(); //서버로부터 데이터를 읽어와서 line string에 저장함
+//            if (line.startsWith("SUBMITNAME")) //서버로부터 읽어온 데이터가 SUBMITNAME으로 시작하면
+//            {
+//               name = getName(); // getName()함수를 호출해서 클라이언트의 이름을 입력받음
+//               textName.setText(name);
+//                out.println(name); // 입력 받은 이름을 서버에 보내줌
+//             
+//            } 
+//            else if (line.startsWith("NAMEACCEPTED")) //서버로부터 읽어온 데이터가 NAMEACCEPTED로 시작하면
+//            {
+//                textField.setEditable(true); //이제 textField가 수정 가능해짐
+//            } 
+//            else if(line.startsWith("ENTRANCE"))//서버로부터 읽어온 데이터가 ENTRANCE로 시작하면
+//            {
+//               messageArea.append("<"+line.substring(8)+">"+"님이 입장하셨습니다.\n"); //읽어온 데이터의 8글자 뒤부터가 이름이기 때문에 messageArea에 <name> ENTRANCE란 메세지를 첨부한다. 
+//               
+//            }
+//            else if(line.startsWith("WHISPER")) //서버로부터 읽어온 데이터가 WHISPER로 시작하면
+//            {
+//               
+//               messageArea.append(line.substring(7)+"\n");//읽어온 데이터의 7글자 뒤부터가 "보내는 사람의 이름: message" format이기 때문에 messageArea에 첨부한다.
+//            }
+//            else if (line.startsWith("MESSAGE")) 
+//            {
+//                messageArea.append(line.substring(8) + "\n"); //읽어온 데이터의 8글자 뒤부터가 message이기 때문에 messageArea에 첨부한다.
+//            }
+//            else if(line.startsWith("EXIT")) //서버로부터 읽어온 데이터가 EXIT로 시작하면
+//            {
+//               messageArea.append("<"+line.substring(4)+">"+"님이 나가셨습니다."+"\n"); //읽어온 데이터의 4글자 뒤부터가 종료하는 클라이언트의 name이기 때문에 messageArea에 첨부한다.
+//            }
+//        } 
            
     }
 
    
     public static void main(String[] args) throws Exception 
     {
- 
-        ChatClient client = new ChatClient();
+    	To_overcom_HuU HuU = new To_overcom_HuU();
+    	EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					HuU.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+    	ChatClient client = new ChatClient();
+    	client.run();
+        
         client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         client.frame.setVisible(true);
-        client.run();
+        
     }
 }

@@ -11,13 +11,18 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class To_overcom_HuU extends JFrame implements ActionListener {
+	Client call = new Client();
 	JCheckBox[] typeOfFood = new JCheckBox[5];
 	JComboBox priority = new JComboBox();
+	static JLabel blackRec;
 	private JPanel contentPane;
 	BufferedReader in;
 	PrintWriter out;
 	int[] foodIndex = { -1, -1, -1, -1 };
 	int priorityIndex = -1;
+	static int type=-1;
+	static int food=-1;
+	static int des=-1;
 
 	public To_overcom_HuU() {
 		Font font;
@@ -114,6 +119,7 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		completeButton.setBackground(new Color(0, 0, 0, 0));
 		completeButton.setBorderPainted(false);
 		completeButton.setBounds(0, 50, 300, 250);
+		//completeButton.addActionListener((ActionListener) this);
 		completeButton.addActionListener((ActionListener) this);
 		// completeButton.addActionListener();
 		// completeButton.setActionCommand(Integer.toString(1));
@@ -138,6 +144,56 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		eataloneButton.setBackground(new Color(0, 0, 0, 0));
 		eataloneButton.setBorderPainted(false);
 		eataloneButton.setBounds(0, 50, 300, 250);
+		eataloneButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				Client cli = new Client();
+				int uncheckedCount = 0;
+				// TODO Auto-generated method stub
+				for (int i = 0; i < 4; i++) {
+					foodIndex[i] = -1;
+				}
+
+				if (typeOfFood[4].isSelected()) {
+					for (int i = 0; i < 4; i++) {
+						foodIndex[i] = i;
+						//out.println("food" + foodIndex[i]);
+					}
+				}
+
+				else {
+					for (int i = 0, j = 0; i < 4; i++) {
+						if (typeOfFood[i].isSelected()) {
+							foodIndex[j] = i;
+							//out.println("food" + foodIndex[j]);
+							j++;
+
+						} else
+							uncheckedCount++;
+					}
+				}
+
+				// error message
+				if (uncheckedCount == 4) {
+					JOptionPane.showMessageDialog(null, "Please select at least one food type.", "Select food type!",
+							JOptionPane.WARNING_MESSAGE);
+					uncheckedCount = 0;
+				}
+				if (priority.getSelectedIndex() == 0) {
+					JOptionPane.showMessageDialog(null, "Please select one priority.", "Select priority!",
+							JOptionPane.WARNING_MESSAGE);
+				}
+
+				for (int i = 0; i < 4; i++) {
+					System.out.println(foodIndex[i]);
+				}
+				priorityIndex = priority.getSelectedIndex();
+				//out.println("priority" + priorityIndex);
+				System.out.println("dd" + priorityIndex);
+				cli.eataloneInformimg(foodIndex,priorityIndex);
+			}
+		});
 		JLabel btLabel = new JLabel(new ImageIcon(
 				((new ImageIcon("혼밥라벨.png")).getImage()).getScaledInstance(250, 80, java.awt.Image.SCALE_SMOOTH)));
 		btLabel.setBounds(0, 300, 300, 80);
@@ -164,9 +220,12 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		redTr.setBackground(null);
 		selectedFoodtype.add(redTr);
 
-		JLabel blackRec = new JLabel(new ImageIcon(
-				((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+//		blackRec = new JLabel(new ImageIcon(
+//				((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+		blackRec = new JLabel();
 		blackRec.setBounds(96, 40, 347, 106);
+		blackRec.setOpaque(true);
+		blackRec.setBackground(Color.black);
 		selectedFoodtype.add(blackRec);
 
 		// 선택된 음식
@@ -199,84 +258,162 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		panel3.add(restaurant);
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		int uncheckedCount = 0;
-		// TODO Auto-generated method stub
-		for (int i = 0; i < 4; i++) {
-			foodIndex[i] = -1;
-		}
+	
 
-		if (typeOfFood[4].isSelected()) {
+	public class sendToClient{
+		sendToClient(){
+			int uncheckedCount = 0;
+			// TODO Auto-generated method stub
 			for (int i = 0; i < 4; i++) {
-				foodIndex[i] = i;
-				out.println("food" + foodIndex[i]);
+				foodIndex[i] = -1;
 			}
-			//return;
-		}
 
-		else {
-			for (int i = 0, j = 0; i < 4; i++) {
-				if (typeOfFood[i].isSelected()) {
-					foodIndex[j] = i;
-					out.println("food" + foodIndex[j]);
-					j++;
-
-				} else
-					uncheckedCount++;
-			}
-		}
-
-		// error message
-		if (uncheckedCount == 4) {
-			JOptionPane.showMessageDialog(null, "Please select at least one food type.", "Select food type!",
-					JOptionPane.WARNING_MESSAGE);
-			uncheckedCount = 0;
-		}
-		if (priority.getSelectedIndex() == 0) {
-			JOptionPane.showMessageDialog(null, "Please select one priority.", "Select priority!",
-					JOptionPane.WARNING_MESSAGE);
-		}
-
-		for (int i = 0; i < 4; i++) {
-			System.out.println(foodIndex[i]);
-		}
-		priorityIndex = priority.getSelectedIndex();
-		out.println("priority" + priorityIndex);
-		System.out.println("dd" + priorityIndex);
-
-		return;
-
-	}
-
-	private void run() throws IOException {
-		Socket socket = new Socket("127.0.0.1", 1121);
-		in = new BufferedReader(new InputStreamReader( // 서버로 부터 읽어오는 input
-				// stream
-				socket.getInputStream()));
-		out = new PrintWriter(socket.getOutputStream(), true); // 서버로 데이터를 보내는
-		// output stream
-
-		while (true) {
-			String line = in.readLine(); // 서버로부터 데이터를 읽어와서 line string에 저장함
-			// if (line.startsWith("selected"))
-			// {
-			// 창에 보여줌
-			// }
-		}
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		To_overcom_HuU client = new To_overcom_HuU();
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					client.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
+			if (typeOfFood[4].isSelected()) {
+				for (int i = 0; i < 4; i++) {
+					foodIndex[i] = i;
+					//out.println("food" + foodIndex[i]);
 				}
 			}
-		});
-		client.run();
+
+			else {
+				for (int i = 0, j = 0; i < 4; i++) {
+					if (typeOfFood[i].isSelected()) {
+						foodIndex[j] = i;
+						j++;
+
+					} else
+						uncheckedCount++;
+				}
+			}
+
+			// error message
+			if (uncheckedCount == 4) {
+				JOptionPane.showMessageDialog(null, "Please select at least one food type.", "Select food type!",
+						JOptionPane.WARNING_MESSAGE);
+				uncheckedCount = 0;
+			}
+			if (priority.getSelectedIndex() == 0) {
+				JOptionPane.showMessageDialog(null, "Please select one priority.", "Select priority!",
+						JOptionPane.WARNING_MESSAGE);
+			}
+
+			for (int i = 0; i < 4; i++) {
+				System.out.println(foodIndex[i]);
+			}
+			priorityIndex = priority.getSelectedIndex();
+			System.out.println("dd" + priorityIndex);
+
+/////////////////////////////////////여기서 Client의 메소드나 컨스트럭터를 통해 값을 넘겨주고 그 값은 바로 서버에게 보내짐.
+			call.completeInforming(foodIndex, priorityIndex);
+		}
+		
 	}
+	
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		//When user push complete button
+		sendToClient a = new sendToClient();
+	}
+	
+//	public static void ReadLine (int t, int f, int d)
+//	{
+//		type = t;
+//		food = f;
+//		des = d;
+//		System.out.println("하하하하 "+type);
+//		
+//	}
+
+	
+	
+	
+//	public void actionPerformed(ActionEvent e) {
+//		int uncheckedCount = 0;
+//		// TODO Auto-generated method stub
+//		for (int i = 0; i < 4; i++) {
+//			foodIndex[i] = -1;
+//		}
+//
+//		if (typeOfFood[4].isSelected()) {
+//			for (int i = 0; i < 4; i++) {
+//				foodIndex[i] = i;
+//				out.println("food" + foodIndex[i]);
+//			}
+//			//return;
+//		}
+//
+//		else {
+//			for (int i = 0, j = 0; i < 4; i++) {
+//				if (typeOfFood[i].isSelected()) {
+//					foodIndex[j] = i;
+//					out.println("food" + foodIndex[j]);
+//					j++;
+//
+//				} else
+//					uncheckedCount++;
+//			}
+//		}
+//
+//		// error message
+//		if (uncheckedCount == 4) {
+//			JOptionPane.showMessageDialog(null, "Please select at least one food type.", "Select food type!",
+//					JOptionPane.WARNING_MESSAGE);
+//			uncheckedCount = 0;
+//		}
+//		if (priority.getSelectedIndex() == 0) {
+//			JOptionPane.showMessageDialog(null, "Please select one priority.", "Select priority!",
+//					JOptionPane.WARNING_MESSAGE);
+//		}
+//
+//		for (int i = 0; i < 4; i++) {
+//			System.out.println(foodIndex[i]);
+//		}
+//		priorityIndex = priority.getSelectedIndex();
+//		out.println("priority" + priorityIndex);
+//		System.out.println("dd" + priorityIndex);		
+//	}
+
+//	private void run() throws IOException, InterruptedException {
+//
+//		Socket socket = new Socket("127.0.0.1", 1121);
+//
+//		System.out.println("tt1ttt "+type);
+//		BufferedReader ii = new BufferedReader(new InputStreamReader( // ������ ���� �о���� input
+//														// stream
+//				socket.getInputStream()));
+//		out = new PrintWriter(socket.getOutputStream(), true); // ������ �����͸� ������
+//		//BufferedReader ii = new BufferedReader(new InputStreamReader(socket.getInputStream()));											// output stream
+//		BufferedReader in;
+//		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//		//String line;
+//	}
+
+	
+	
+	
+	
+//	public static void main(String[] args) throws Exception {
+//
+//		To_overcom_HuU client = new To_overcom_HuU();
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					client.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//		client.run();
+//	}
+	
+
+	
+//아래 괄호 있다...!!!!! 잊지마!!	
 }
+
+
+
+
+
+
