@@ -35,7 +35,7 @@ public class ChatClient{
     String other="";
   
     
-    public ChatClient()
+    public ChatClient() throws IOException
     {
        messageArea = new JTextArea(){
           {setOpaque(false);}
@@ -108,8 +108,9 @@ public class ChatClient{
         JScrollPane scroll = new JScrollPane(messageArea);
         scroll.setBounds(15, 50, 450, 450);
         frame.getContentPane().add(scroll);
-     
-       
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setVisible(true);
+        this.run();
 
         // Add Listeners
         textField.addActionListener(new ActionListener() { 
@@ -117,8 +118,9 @@ public class ChatClient{
             public void actionPerformed(ActionEvent e) 
             {
            
-                out.println(textField.getText());//textField에 입력을 받아서 서버로 보낸다.
-                textField.setText("");
+//                out.println(textField.getText());//textField에 입력을 받아서 서버로 보낸다.
+//                textField.setText("");
+            	///////////////////////////////////////////////////////////////////////
             }
             
         });
@@ -136,8 +138,9 @@ public class ChatClient{
            
            public void actionPerformed(ActionEvent e)
            {
-              out.println(textField.getText());//textField에 입력을 받아서 서버로 보낸다.
-                textField.setText("");
+//              out.println(textField.getText());//textField에 입력을 받아서 서버로 보낸다.
+//                textField.setText("");
+        	   //////////////////////////////////////////////////////////////
            }
         });
        
@@ -146,23 +149,14 @@ public class ChatClient{
             public void actionPerformed(ActionEvent e) 
              {
                other = sendWhisper(); //sendWhisper함수를 호출해서 귓속말을 보낼 사람의 이름을 입력받아서 other에 저장한다.
-                 out.println(other+"@"+textField.getText()); // "귓속말 받을 사람의 이름@message" format으로 서버로 보낸다. 
-                 textField.setText("");
+//                 out.println(other+"@"+textField.getText()); // "귓속말 받을 사람의 이름@message" format으로 서버로 보낸다. 
+//                 textField.setText("");
+               System.out.println("");///////////////////////////////////////////////
              }
         });
     }
     
-    
-    /*private String getServerAddress() 
-    {
-        return JOptionPane.showInputDialog(
-            frame,
-            "Enter IP Address of the Server:",
-            "Welcome to the Chatter",
-            JOptionPane.QUESTION_MESSAGE); //ip address를 입력받음
-    }
-*/
-   
+       
     private String getName() 
     {
         return JOptionPane.showInputDialog(
@@ -180,15 +174,22 @@ public class ChatClient{
                "",
                JOptionPane.PLAIN_MESSAGE); //귓속말을 보낼 상대의 이름을 입력받음
    }
-    private void run() throws IOException 
+    public void run() throws IOException 
     {
-
-        Socket socket = new Socket("127.0.0.1", 1121);
+    	Socket socket = new Socket("127.0.0.1", 1122);
         in = new BufferedReader(new InputStreamReader( //서버로 부터 읽어오는 input stream
             socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true); //서버로 데이터를 보내는 output stream
         
      
+    	System.out.println("chat client run이다!");
+//    	while(true){
+//    		name = getName(); // getName()함수를 호출해서 클라이언트의 이름을 입력받음
+//    		textName.setText(name);
+//    		
+//    	}
+        
+    	
 //        while (true) 
 //        {
 //            String line = in.readLine(); //서버로부터 데이터를 읽어와서 line string에 저장함
@@ -222,27 +223,18 @@ public class ChatClient{
 //               messageArea.append("<"+line.substring(4)+">"+"님이 나가셨습니다."+"\n"); //읽어온 데이터의 4글자 뒤부터가 종료하는 클라이언트의 name이기 때문에 messageArea에 첨부한다.
 //            }
 //        } 
+    	
            
-    }
+    }//////여기도 괄호!!
 
    
     public static void main(String[] args) throws Exception 
     {
-    	To_overcom_HuU HuU = new To_overcom_HuU();
-    	EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					HuU.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
     	ChatClient client = new ChatClient();
-    	client.run();
-        
-        client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        client.frame.setVisible(true);
-        
+//    	client.run();
+//        client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        client.frame.setVisible(true);
     }
-}
+    
+    
+} ////////////여기 괄호!!!

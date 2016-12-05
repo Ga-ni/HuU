@@ -18,22 +18,24 @@ public class Client {
 	public void completeInforming(int[] foodIdx, int prioIdx) {
 		// take food type and priority index from To_overcom_HuU as parameter,
 		// and send data to server.
-		System.out.println("test~!!!");
 		out.println("SELECTCOMPLETE");////////////////////////
 		for (int i = 0; i < 4; i++) {
 			out.println("food" + foodIdx[i]);
 		}
 		out.println("priority" + prioIdx);
+		out.println("null");
 		/////////// 음..서버 코딩해주기
 	}
 	public void eataloneInformimg(int[] foodIdx, int prioIdx) {
 		// take eat alone information from To_overcome_HuU, and send data to
 		// server
+		System.out.println("test~!!!");
 		out.println("EATALONE");
 		for (int i = 0; i < 4; i++) {
 			out.println("food" + foodIdx[i]);
 		}
 		out.println("priority" + prioIdx);
+		out.println("null");
 		/////////// 서버 코딩해주기!!
 	}
 
@@ -53,7 +55,7 @@ public class Client {
 			String result = "";
 			int T = -1, F = -1, D = -1;
 			/////////////////일단은 alone이든 아니든 출력
-			if ((result = in.readLine()) == "RESULT") {
+			if ((result = in.readLine()).equals("RESULT")) {
 				T=Integer.parseInt(in.readLine());
 				F=Integer.parseInt(in.readLine());
 				D=Integer.parseInt(in.readLine());
@@ -63,9 +65,9 @@ public class Client {
 				System.out.println("Client result test: "+D);
 				
 				
-				HuU.blackRec.setText("제발.."+T);
-				HuU.blackRec.setText("제발.."+F);
-				HuU.blackRec.setText("제발.."+D);
+				HuU.blackRec.setText("제발..T : "+T);
+				HuU.blackR.setText("제발..F : "+F);
+				//HuU.blackRec.setText("제발.."+D);
 				
 			}
 		}

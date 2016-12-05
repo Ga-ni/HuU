@@ -1,5 +1,8 @@
 
 import java.util.Iterator;
+
+import javax.swing.JFrame;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +15,7 @@ import java.util.HashSet;
 public class Server {
 
 	private static final int PORT = 1121;// 서버가 사용하는 포트
+	private static final int CPORT =1122;
 
 	private static ArrayList<String> names = new ArrayList<String>();
 	private static ArrayList<PrintWriter> writers = new ArrayList<PrintWriter>();
@@ -23,9 +27,11 @@ public class Server {
 	public static void main(String[] args) throws Exception {
 		System.out.println("The Server is running.");
 		ServerSocket listener = new ServerSocket(PORT);
+		ServerSocket clistener = new ServerSocket(CPORT);
 		try {
 			while (true) {
 				new Handler(listener.accept()).start();
+				new ChatThread(clistener.accept()).start();
 			}
 		} finally {
 			listener.close();
@@ -59,18 +65,20 @@ public class Server {
 
 			System.out.println("서버 run이다");
 			try {
-//				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//				out = new PrintWriter(socket.getOutputStream(), true);
+				// in = new BufferedReader(new
+				// InputStreamReader(socket.getInputStream()));
+				// out = new PrintWriter(socket.getOutputStream(), true);
 
 				while (true) {
 					String input = "";
 					int inx = 0;
-					for (int i = 0; i < 4; i++) type[i] = -1; // initialization
+					for (int i = 0; i < 4; i++)
+						type[i] = -1; // initialization
+					System.out.println("server : before while loop.");
 
-					if ((input = in.readLine()) == "SELECTCOMPLETE") {
+					if ((input = in.readLine()).equals("SELECTCOMPLETE")) {
 						System.out.println("server : complete button");
-						while ((input = in.readLine()) != null) {
-							input = in.readLine();
+						while (!(input = in.readLine()).equals("null")) {
 							if (input.startsWith("food")) {
 								input = input.substring(4);
 								System.out.println("foodtypeidx: " + input);
@@ -81,16 +89,18 @@ public class Server {
 								System.out.println("priorityidx: " + input);
 								prio = Integer.parseInt(input);
 							}
+							// else{
+							// System.out.println("서버...오류");
+							// }
 						}
-						System.out.println("out of while loop!!!");
-						callSelect("NOTALONE"); 
-						////////////////////////////// 서버가 callSelect로 얻은 값을 디비로 잘 읽었다고 가정하고 뒤에 코딩함.
-						
-					} 
-					else if ((input = in.readLine()) == "EATALONE") {
+						System.out.println("COMPLETE: out of while loop!!!");
+						callSelect("NOTALONE");
+						////////////////////////////// 서버가 callSelect로 얻은 값을 디비로
+						////////////////////////////// 잘 읽었다고 가정하고 뒤에 코딩함.
+
+					} else if (input.equals("EATALONE")) {
 						System.out.println("server : eatalone button");
-						while ((input = in.readLine()) != null) {
-							input = in.readLine();
+						while (!(input = in.readLine()).equals("null")) {
 							if (input.startsWith("food")) {
 								input = input.substring(4);
 								System.out.println("foodtypeidx: " + input);
@@ -100,13 +110,16 @@ public class Server {
 								input = input.substring(8);
 								System.out.println("priorityidx: " + input);
 								prio = Integer.parseInt(input);
-							} else{
-								System.out.println("서버...오류");
 							}
+							// else{
+							// System.out.println("서버...오류");
+							// }
 						}
-						System.out.println("out of while loop!!!");
-						callSelect("ALONE"); //////////////// 이거 수정하기!!!!
-						/////////////chatclient 부르고 수정하기!! thread 생각해보기
+						System.out.println("EATALONE: out of while loop!!!");
+						ChatClient chat = new ChatClient();
+
+						// callSelect("ALONE"); //////////////// 이거 수정하기!!!!
+						///////////// chatclient 부르고 수정하기!! thread 생각해보기
 						Thread.sleep(1000);
 					}
 				}
@@ -119,29 +132,29 @@ public class Server {
 			}
 			System.out.println("end.");
 		}
-		
+
 		private void callSelect(String check) {
 			// TODO Auto-generated method stub
-			System.out.println("callSelect함수 :"+type[0]+", "+type[1]);
+			System.out.println("callSelect함수 :" + type[0] + ", " + type[1]);
 			Select selcet = new Select(type, prio);
-			/////////////////여기서 디비정보 읽어서 보내주기!!
-			if(check.equals("NOTALONE")){
-			out.println("RESULT");
-			out.println(selcet.Type);
-			out.println(selcet.Food);
-			out.println(selcet.Desc);
-			}
-			else if(check.equals("ALONE")){
-				//////여기서 chatclient를 쓰레드로 해보기
-				//////일단은 결과를 화면에 출력
+			///////////////// 여기서 디비정보 읽어서 보내주기!!
+			if (check.equals("NOTALONE")) {
 				out.println("RESULT");
 				out.println(selcet.Type);
 				out.println(selcet.Food);
 				out.println(selcet.Desc);
+			} else if (check.equals("ALONE")) {
+				////// 여기서 chatclient를 쓰레드로 해보기
+				////// 일단은 결과를 화면에 출력
+				out.println("RESULT");
+				out.println(selcet.Type);
+				out.println(selcet.Food);
+				out.println(selcet.Desc);
+			} else {
+				System.out.println("음... callset error");
 			}
 		}
-		
-		
+
 		// finally {
 		//
 		// if (name != null) // 네임이 null값이 아니면
@@ -172,6 +185,39 @@ public class Server {
 		// this.callSelect();
 		// }
 
-	}//여기까지는 Handler class입니다.
+	}// 여기까지는 Handler class입니다.
 
-}
+	public static class ChatThread extends Thread {
+		private Socket socket;
+		private BufferedReader in; // 클라이언트로부터 데이터를 수신받기 위한
+		private PrintWriter out; // 클라이언트에게 데이터를 내보내기 위한
+		ChatThread(Socket socket){
+			this.socket=socket;
+		}
+		
+		public void run() {
+			try {
+				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			try {
+				out = new PrintWriter(socket.getOutputStream(), true);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			System.out.println("chatthread run이다");
+			
+			
+			try{
+				Thread.sleep(500);
+			}catch(Exception e){
+				
+			}
+			System.out.println("thread end.");
+		}//run
+	}///ChatThread class끝
+
+}////////여기 괄호!!
