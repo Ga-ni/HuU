@@ -15,6 +15,7 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 	JCheckBox[] typeOfFood = new JCheckBox[5];
 	JComboBox priority = new JComboBox();
 	static JLabel blackRec;
+	static JLabel blackR;
 	private JPanel contentPane;
 	BufferedReader in;
 	PrintWriter out;
@@ -224,7 +225,11 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 //				((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
 		blackRec = new JLabel();
 		blackRec.setBounds(96, 40, 347, 106);
+		blackRec.setText("");
+		blackRec.setFont(new Font("함초롬바탕",Font.BOLD,30));
+		blackRec.setHorizontalAlignment(SwingConstants.CENTER);
 		blackRec.setOpaque(true);
+		blackRec.setForeground(Color.WHITE);
 		blackRec.setBackground(Color.black);
 		selectedFoodtype.add(blackRec);
 
@@ -240,9 +245,16 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		redT.setBackground(null);
 		selectedFood.add(redT);
 
-		JLabel blackR = new JLabel(new ImageIcon(
-				((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+//		JLabel blackR = new JLabel(new ImageIcon(
+//				((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+		blackR = new JLabel();
 		blackR.setBounds(96, 40, 347, 106);
+		blackR.setText("");
+		blackR.setFont(new Font("함초롬바탕",Font.BOLD,30));
+		blackR.setHorizontalAlignment(SwingConstants.CENTER);
+		blackR.setOpaque(true);
+		blackR.setForeground(Color.WHITE);
+		blackR.setBackground(Color.black);
 		selectedFood.add(blackR);
 
 		// 식당정보

@@ -53,21 +53,24 @@ public class Client {
 
 		while (true) {
 			String result = "";
-			int T = -1, F = -1, D = -1;
+			String T;
+			String F , D ;
 			/////////////////일단은 alone이든 아니든 출력
 			if ((result = in.readLine()).equals("RESULT")) {
-				T=Integer.parseInt(in.readLine());
-				F=Integer.parseInt(in.readLine());
-				D=Integer.parseInt(in.readLine());
+				T=in.readLine();
+				F=in.readLine();
+				D=in.readLine();
 				
 				System.out.println("Client result test: "+T);
 				System.out.println("Client result test: "+F);
 				System.out.println("Client result test: "+D);
 				
 				
-				HuU.blackRec.setText("제발..T : "+T);
-				HuU.blackR.setText("제발..F : "+F);
-				//HuU.blackRec.setText("제발.."+D);
+				HuU.blackRec.setText(T);
+				HuU.blackR.setText(F);
+				//HuU.Ex
+				//HuU.setVisible(false);
+				//HuU.blackRec.setText(D);
 				
 			}
 		}
