@@ -12,18 +12,21 @@ import javax.swing.border.*;
 
 public class To_overcom_HuU extends JFrame implements ActionListener {
 	Client call = new Client();
+	
 	JCheckBox[] typeOfFood = new JCheckBox[5];
 	JComboBox priority = new JComboBox();
 	static JLabel blackRec;
 	static JLabel blackR;
+	// static TextArea yellow;
+	static JLabel[] yellow = new JLabel[6];
 	private JPanel contentPane;
 	BufferedReader in;
 	PrintWriter out;
 	int[] foodIndex = { -1, -1, -1, -1 };
 	int priorityIndex = -1;
-	static int type=-1;
-	static int food=-1;
-	static int des=-1;
+	static int type = -1;
+	static int food = -1;
+	static int des = -1;
 
 	public To_overcom_HuU() {
 		Font font;
@@ -120,7 +123,7 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		completeButton.setBackground(new Color(0, 0, 0, 0));
 		completeButton.setBorderPainted(false);
 		completeButton.setBounds(0, 50, 300, 250);
-		//completeButton.addActionListener((ActionListener) this);
+		// completeButton.addActionListener((ActionListener) this);
 		completeButton.addActionListener((ActionListener) this);
 		// completeButton.addActionListener();
 		// completeButton.setActionCommand(Integer.toString(1));
@@ -149,7 +152,8 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				Client cli = new Client();
+				Client cli= new Client();
+				
 				int uncheckedCount = 0;
 				// TODO Auto-generated method stub
 				for (int i = 0; i < 4; i++) {
@@ -159,7 +163,7 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 				if (typeOfFood[4].isSelected()) {
 					for (int i = 0; i < 4; i++) {
 						foodIndex[i] = i;
-						//out.println("food" + foodIndex[i]);
+						// out.println("food" + foodIndex[i]);
 					}
 				}
 
@@ -167,7 +171,7 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 					for (int i = 0, j = 0; i < 4; i++) {
 						if (typeOfFood[i].isSelected()) {
 							foodIndex[j] = i;
-							//out.println("food" + foodIndex[j]);
+							// out.println("food" + foodIndex[j]);
 							j++;
 
 						} else
@@ -190,9 +194,9 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 					System.out.println(foodIndex[i]);
 				}
 				priorityIndex = priority.getSelectedIndex();
-				//out.println("priority" + priorityIndex);
+				// out.println("priority" + priorityIndex);
 				System.out.println("dd" + priorityIndex);
-				cli.eataloneInformimg(foodIndex,priorityIndex);
+				cli.eataloneInformimg(foodIndex, priorityIndex);
 			}
 		});
 		JLabel btLabel = new JLabel(new ImageIcon(
@@ -221,12 +225,13 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		redTr.setBackground(null);
 		selectedFoodtype.add(redTr);
 
-//		blackRec = new JLabel(new ImageIcon(
-//				((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+		// blackRec = new JLabel(new ImageIcon(
+		// ((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106,
+		// java.awt.Image.SCALE_SMOOTH)));
 		blackRec = new JLabel();
 		blackRec.setBounds(96, 40, 347, 106);
 		blackRec.setText("");
-		blackRec.setFont(new Font("함초롬바탕",Font.BOLD,30));
+		blackRec.setFont(new Font("함초롬바탕", Font.BOLD, 30));
 		blackRec.setHorizontalAlignment(SwingConstants.CENTER);
 		blackRec.setOpaque(true);
 		blackRec.setForeground(Color.WHITE);
@@ -245,12 +250,13 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		redT.setBackground(null);
 		selectedFood.add(redT);
 
-//		JLabel blackR = new JLabel(new ImageIcon(
-//				((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+		// JLabel blackR = new JLabel(new ImageIcon(
+		// ((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106,
+		// java.awt.Image.SCALE_SMOOTH)));
 		blackR = new JLabel();
 		blackR.setBounds(96, 40, 347, 106);
 		blackR.setText("");
-		blackR.setFont(new Font("함초롬바탕",Font.BOLD,30));
+		blackR.setFont(new Font("함초롬바탕", Font.BOLD, 30));
 		blackR.setHorizontalAlignment(SwingConstants.CENTER);
 		blackR.setOpaque(true);
 		blackR.setForeground(Color.WHITE);
@@ -267,13 +273,22 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 			}
 		};
 		restaurant.setBounds(47, 400, 600, 400);
+		restaurant.setLayout(null);
+
+		for (int j = 0; j < 6; j++) {
+			yellow[j] = new JLabel();
+			yellow[j].setBounds(10, 10 + (30 * j), 590, 50);
+			yellow[j].setHorizontalAlignment(SwingConstants.CENTER);
+			yellow[j].setFont(new Font("함초롬바탕", Font.BOLD, 30));
+			yellow[j].setBackground(new Color(231, 191, 45));
+			yellow[0].setBackground(Color.GREEN);
+			restaurant.add(yellow[j]);
+		}
 		panel3.add(restaurant);
 	}
 
-	
-
-	public class sendToClient{
-		sendToClient(){
+	public class sendToClient {
+		sendToClient() {
 			int uncheckedCount = 0;
 			// TODO Auto-generated method stub
 			for (int i = 0; i < 4; i++) {
@@ -283,7 +298,7 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 			if (typeOfFood[4].isSelected()) {
 				for (int i = 0; i < 4; i++) {
 					foodIndex[i] = i;
-					//out.println("food" + foodIndex[i]);
+					// out.println("food" + foodIndex[i]);
 				}
 			}
 
@@ -315,117 +330,14 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 			priorityIndex = priority.getSelectedIndex();
 			System.out.println("dd" + priorityIndex);
 
-/////////////////////////////////////여기서 Client의 메소드나 컨스트럭터를 통해 값을 넘겨주고 그 값은 바로 서버에게 보내짐.
 			call.completeInforming(foodIndex, priorityIndex);
 		}
-		
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		//When user push complete button
+		// When user push complete button
 		sendToClient a = new sendToClient();
 	}
-	
-//	public static void ReadLine (int t, int f, int d)
-//	{
-//		type = t;
-//		food = f;
-//		des = d;
-//		System.out.println("하하하하 "+type);
-//		
-//	}
-
-	
-	
-	
-//	public void actionPerformed(ActionEvent e) {
-//		int uncheckedCount = 0;
-//		// TODO Auto-generated method stub
-//		for (int i = 0; i < 4; i++) {
-//			foodIndex[i] = -1;
-//		}
-//
-//		if (typeOfFood[4].isSelected()) {
-//			for (int i = 0; i < 4; i++) {
-//				foodIndex[i] = i;
-//				out.println("food" + foodIndex[i]);
-//			}
-//			//return;
-//		}
-//
-//		else {
-//			for (int i = 0, j = 0; i < 4; i++) {
-//				if (typeOfFood[i].isSelected()) {
-//					foodIndex[j] = i;
-//					out.println("food" + foodIndex[j]);
-//					j++;
-//
-//				} else
-//					uncheckedCount++;
-//			}
-//		}
-//
-//		// error message
-//		if (uncheckedCount == 4) {
-//			JOptionPane.showMessageDialog(null, "Please select at least one food type.", "Select food type!",
-//					JOptionPane.WARNING_MESSAGE);
-//			uncheckedCount = 0;
-//		}
-//		if (priority.getSelectedIndex() == 0) {
-//			JOptionPane.showMessageDialog(null, "Please select one priority.", "Select priority!",
-//					JOptionPane.WARNING_MESSAGE);
-//		}
-//
-//		for (int i = 0; i < 4; i++) {
-//			System.out.println(foodIndex[i]);
-//		}
-//		priorityIndex = priority.getSelectedIndex();
-//		out.println("priority" + priorityIndex);
-//		System.out.println("dd" + priorityIndex);		
-//	}
-
-//	private void run() throws IOException, InterruptedException {
-//
-//		Socket socket = new Socket("127.0.0.1", 1121);
-//
-//		System.out.println("tt1ttt "+type);
-//		BufferedReader ii = new BufferedReader(new InputStreamReader( // ������ ���� �о���� input
-//														// stream
-//				socket.getInputStream()));
-//		out = new PrintWriter(socket.getOutputStream(), true); // ������ �����͸� ������
-//		//BufferedReader ii = new BufferedReader(new InputStreamReader(socket.getInputStream()));											// output stream
-//		BufferedReader in;
-//		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//		//String line;
-//	}
-
-	
-	
-	
-	
-//	public static void main(String[] args) throws Exception {
-//
-//		To_overcom_HuU client = new To_overcom_HuU();
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					client.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//		client.run();
-//	}
-	
-
-	
-//아래 괄호 있다...!!!!! 잊지마!!	
+// 아래 괄호 있다...!!!!! 잊지마!!
 }
-
-
-
-
-
-
