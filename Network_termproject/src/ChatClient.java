@@ -36,11 +36,11 @@ public class ChatClient{
     Image img = new ImageIcon("img/치킨샐리.jpg").getImage().getScaledInstance(470, 500, java.awt.Image.SCALE_SMOOTH);
     String other="";
     
-    public ChatClient() throws IOException,InterruptedException //int T //타입별로 다른 채팅방 만들어주려고 했음.
+    public ChatClient() throws IOException,InterruptedException 
     {
 
        
-       messageArea = new JTextArea(){
+       messageArea = new JTextArea(){ //message를 보여주는 창에 대한 GUI
           {setOpaque(false);}
           public void paint(Graphics g){
              g.drawImage(img, 0, 0, this);
@@ -58,13 +58,11 @@ public class ChatClient{
        
        frame.getContentPane().setBackground(new Color(79,54,29));
        JButton b1 = new JButton(new ImageIcon(
-                ((new ImageIcon("img/전송.png")).getImage()).getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH)));
+                ((new ImageIcon("img/전송.png")).getImage()).getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH))); //전송버튼
        JButton whisper = new JButton(new ImageIcon(
-                ((new ImageIcon("img/귓속말.png")).getImage()).getScaledInstance(80, 35, java.awt.Image.SCALE_SMOOTH)));
-        //b1.setBackground(new Color(254,230,251));
+                ((new ImageIcon("img/귓속말.png")).getImage()).getScaledInstance(80, 35, java.awt.Image.SCALE_SMOOTH))); //귓속말버튼
        JButton b2 = new JButton(new ImageIcon(
-                ((new ImageIcon("img/exit.png")).getImage()).getScaledInstance(80, 55, java.awt.Image.SCALE_SMOOTH)));
-       // b2.setBackground(Color.lightGray);
+                ((new ImageIcon("img/exit.png")).getImage()).getScaledInstance(80, 55, java.awt.Image.SCALE_SMOOTH))); //나가기버튼
         whisper.setBackground(new Color(225,219,249));
         // Layout GUI
         
@@ -85,7 +83,7 @@ public class ChatClient{
         frame.getContentPane().add(textField); // textField를 생성한다.
         frame.getContentPane().add(textName);
         frame.getContentPane().add(panel);
-        textField.setFont(new Font("배달의민족 주아",Font.PLAIN,20));
+        textField.setFont(new Font("배달의민족 주아",Font.PLAIN,15));
         textName.setFont(new Font("배달의민족 주아",Font.PLAIN,25));
         b1.setBounds(350, 510, 35, 35);
         b1.setBorder(BorderFactory.createLineBorder(new Color(0,0,0,0)));
@@ -94,35 +92,28 @@ public class ChatClient{
         messageArea.setBorder(BorderFactory.createLineBorder(new Color(0,0,0,0)));
         b1.setOpaque(true);
         frame.getContentPane().add(b1); 
-        //b1.setFont(new Font("배달의민족 한나",Font.PLAIN,15));
         b2.setBounds(390, 10, 80, 25);
       
         b2.setBackground(new Color(255,255,255));
         frame.getContentPane().add(b2); 
-        //b2.setFont(new Font("배달의민족 한나",Font.PLAIN,15));
-        //whisper.setBounds(390, 10, 80, 25);
         whisper.setBounds(390, 510, 80, 35);
-        frame.getContentPane().add(whisper);//whisper button을 추가한다.
-        //whisper.setFont(new Font("배달의민족 한나",Font.PLAIN,15));
+        frame.getContentPane().add(whisper);
         messageArea.setBounds(5,30,470,500);
-
-        messageArea.setFont(new Font("배달의민족 주아",Font.PLAIN,20));
+        messageArea.setFont(new Font("배달의민족 주아",Font.PLAIN,15));
         JScrollPane scroll = new JScrollPane(messageArea);
         scroll.setBounds(15, 50, 450, 450);
         frame.getContentPane().add(scroll);
 
-        textField.addActionListener(new ActionListener() { 
+        textField.addActionListener(new ActionListener() { //textField를 사용했을 때 취하는 액션
            
             public void actionPerformed(ActionEvent e) 
             {
                Client.out.println(textField.getText());//textField에 입력을 받아서 서버로 보낸다.
-               System.out.println("요기오"+textField.getText());
                 textField.setText("");
-               ///////////////////////////////////////////////////////////////////////
             }
         });
         
-        b2.addActionListener(new ActionListener(){
+        b2.addActionListener(new ActionListener(){ //나가기버튼을 눌렀을 때 취하는 액션
            
            public void actionPerformed(ActionEvent e)
            {
@@ -131,24 +122,23 @@ public class ChatClient{
    
         });
         
-        b1.addActionListener(new ActionListener(){
+        b1.addActionListener(new ActionListener(){ //전송버튼을 눌렀을 때 취하는 액션
            
            public void actionPerformed(ActionEvent e)
            {
-              Client.out.println(textField.getText());
-              System.out.println("요기오222222"+textField.getText());
+              Client.out.println(textField.getText()); //서버로 보냄
                 textField.setText("");
            }
         });
        
-        whisper.addActionListener(new ActionListener(){
+        whisper.addActionListener(new ActionListener(){ //귓속말 버튼을 눌렀을 때 취하는 액션
            
             public void actionPerformed(ActionEvent e) 
              {
                other = sendWhisper(); //sendWhisper함수를 호출해서 귓속말을 보낼 사람의 이름을 입력받아서 other에 저장한다.
                  Client.out.println(other+"@"+textField.getText()); // "귓속말 받을 사람의 이름@message" format으로 서버로 보낸다. 
                  textField.setText("");
-               System.out.println("");///////////////////////////////////////////////
+               System.out.println("");
              }
         });
     }
@@ -167,147 +157,7 @@ public class ChatClient{
    {
       return text;
    }
-   void setEdit1()
-   {
-      textField.setEditable(true);
-   }
-//    public void run() throws IOException 
-//    {
-//       in = new BufferedReader(new InputStreamReader( //서버로 부터 읽어오는 input stream
-//               socket.getInputStream()));
-//           out = new PrintWriter(socket.getOutputStream(), true); //서버로 데이터를 보내는 output stream 
-//       System.out.println("chat client run이다!");
-//       
-//       try{
-//          while(true){
-//               String line = in.readLine(); //서버로부터 데이터를 읽어와서 line string에 저장함
-//                   if (line.startsWith("SUBMITNAME")) //서버로부터 읽어온 데이터가 SUBMITNAME으로 시작하면
-//                   {
-//                      name = getName(0);
-//                      textName.setText(name);
-//                      out.println(name);
-//                   }else if(line.startsWith("REPEATEDNAME")){
-//                      name = getName(1);
-//                       textName.setText(name);
-//                       out.println(name);
-//                   }
-//                   else if (line.startsWith("NAMEACCEPTED")) //서버로부터 읽어온 데이터가 NAMEACCEPTED로 시작하면
-//                   {
-//                       textField.setEditable(true); //이제 textField가 수정 가능해짐
-//                       messageArea.setEditable(true);
-//                   } 
-//                   else if(line.startsWith("ENTRANCE"))//서버로부터 읽어온 데이터가 ENTRANCE로 시작하면
-//                   {
-//                      messageArea.append("<"+line.substring(8)+">"+"님이 입장하셨습니다.\n"); //읽어온 데이터의 8글자 뒤부터가 이름이기 때문에 messageArea에 <name> ENTRANCE란 메세지를 첨부한다. 
-//                   }
-//                   else if(line.startsWith("WHISPER")) //서버로부터 읽어온 데이터가 WHISPER로 시작하면
-//                   {
-//                      messageArea.append(line.substring(7)+"\n");//읽어온 데이터의 7글자 뒤부터가 "보내는 사람의 이름: message" format이기 때문에 messageArea에 첨부한다.
-//                   }
-//                   else if (line.startsWith("MESSAGE")) 
-//                   {
-//                       messageArea.append(line.substring(8) + "\n"); //읽어온 데이터의 8글자 뒤부터가 message이기 때문에 messageArea에 첨부한다.
-//                   }
-//                   else if(line.startsWith("EXIT")) //서버로부터 읽어온 데이터가 EXIT로 시작하면
-//                   {
-//                      messageArea.append("<"+line.substring(4)+">"+"님이 나가셨습니다."+"\n"); //읽어온 데이터의 4글자 뒤부터가 종료하는 클라이언트의 name이기 때문에 messageArea에 첨부한다.
-//                   }
-//              
-   
-   
-   
-   
 
-   
-   
-   
-   
-   
-//                   String line = in.readLine(); //서버로부터 데이터를 읽어와서 line string에 저장함
-//                   if (line.startsWith("SUBMITNAME")) //서버로부터 읽어온 데이터가 SUBMITNAME으로 시작하면
-//                   {
-//                      name = getName(); // getName()함수를 호출해서 클라이언트의 이름을 입력받음
-//                      textName.setText(name);
-//                       out.println(name); // 입력 받은 이름을 서버에 보내줌
-//                    
-//                   } 
-//                   else if (line.startsWith("NAMEACCEPTED")) //서버로부터 읽어온 데이터가 NAMEACCEPTED로 시작하면
-//                   {
-//                       textField.setEditable(true); //이제 textField가 수정 가능해짐
-//                   } 
-//                   else if(line.startsWith("ENTRANCE"))//서버로부터 읽어온 데이터가 ENTRANCE로 시작하면
-//                   {
-//                      messageArea.append("<"+line.substring(8)+">"+"님이 입장하셨습니다.\n"); //읽어온 데이터의 8글자 뒤부터가 이름이기 때문에 messageArea에 <name> ENTRANCE란 메세지를 첨부한다. 
-//                      
-//                   }
-//                   else if(line.startsWith("WHISPER")) //서버로부터 읽어온 데이터가 WHISPER로 시작하면
-//                   {
-//                      
-//                      messageArea.append(line.substring(7)+"\n");//읽어온 데이터의 7글자 뒤부터가 "보내는 사람의 이름: message" format이기 때문에 messageArea에 첨부한다.
-//                   }
-//                   else if (line.startsWith("MESSAGE")) 
-//                   {
-//                       messageArea.append(line.substring(8) + "\n"); //읽어온 데이터의 8글자 뒤부터가 message이기 때문에 messageArea에 첨부한다.
-//                   }
-//                   else if(line.startsWith("EXIT")) //서버로부터 읽어온 데이터가 EXIT로 시작하면
-//                   {
-//                      messageArea.append("<"+line.substring(4)+">"+"님이 나가셨습니다."+"\n"); //읽어온 데이터의 4글자 뒤부터가 종료하는 클라이언트의 name이기 때문에 messageArea에 첨부한다.
-//                   }
-   
-   
-   
-   
-   
-//           }
-//       }catch(Exception e){
-//          
-//       }////catch끝
-//        while (true) 
-//        {
-//            String line = in.readLine(); //서버로부터 데이터를 읽어와서 line string에 저장함
-//            if (line.startsWith("SUBMITNAME")) //서버로부터 읽어온 데이터가 SUBMITNAME으로 시작하면
-//            {
-//               name = getName(); // getName()함수를 호출해서 클라이언트의 이름을 입력받음
-//               textName.setText(name);
-//                out.println(name); // 입력 받은 이름을 서버에 보내줌
-//             
-//            } 
-//            else if (line.startsWith("NAMEACCEPTED")) //서버로부터 읽어온 데이터가 NAMEACCEPTED로 시작하면
-//            {
-//                textField.setEditable(true); //이제 textField가 수정 가능해짐
-//            } 
-//            else if(line.startsWith("ENTRANCE"))//서버로부터 읽어온 데이터가 ENTRANCE로 시작하면
-//            {
-//               messageArea.append("<"+line.substring(8)+">"+"님이 입장하셨습니다.\n"); //읽어온 데이터의 8글자 뒤부터가 이름이기 때문에 messageArea에 <name> ENTRANCE란 메세지를 첨부한다. 
-//               
-//            }
-//            else if(line.startsWith("WHISPER")) //서버로부터 읽어온 데이터가 WHISPER로 시작하면
-//            {
-//               
-//               messageArea.append(line.substring(7)+"\n");//읽어온 데이터의 7글자 뒤부터가 "보내는 사람의 이름: message" format이기 때문에 messageArea에 첨부한다.
-//            }
-//            else if (line.startsWith("MESSAGE")) 
-//            {
-//                messageArea.append(line.substring(8) + "\n"); //읽어온 데이터의 8글자 뒤부터가 message이기 때문에 messageArea에 첨부한다.
-//            }
-//            else if(line.startsWith("EXIT")) //서버로부터 읽어온 데이터가 EXIT로 시작하면
-//            {
-//               messageArea.append("<"+line.substring(4)+">"+"님이 나가셨습니다."+"\n"); //읽어온 데이터의 4글자 뒤부터가 종료하는 클라이언트의 name이기 때문에 messageArea에 첨부한다.
-//            }
-//        } 
-       
-           
- //   }//////여기도 괄호!!
-
-   
-//    public static void main(String[] args) throws Exception 
-//    {
-//       ChatClient client = new ChatClient();
-//       client.run();
-//        client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        client.frame.setVisible(true);
-//    }
     
     
-    
-} ////////////run 여기 괄호!!!
+} 

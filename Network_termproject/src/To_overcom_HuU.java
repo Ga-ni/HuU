@@ -17,7 +17,7 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 	JComboBox priority = new JComboBox();
 	static JLabel blackRec;
 	static JLabel blackR;
-	static JLabel[] yellow = new JLabel[6];
+	static JLabel[] restaurantInfo = new JLabel[6];
 	private JPanel contentPane;
 	BufferedReader in;
 	PrintWriter out;
@@ -77,7 +77,7 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 			typeOfFood[i].setBackground(new Color(250, 250, 250, 250));
 			foodtypePanel.add(typeOfFood[i]);
 		}
-
+		// 전체를 누르면 모든 타입이 선택되도록 함
 		typeOfFood[4].addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -129,7 +129,7 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		completeButton.setBackground(new Color(0, 0, 0, 0));
 		completeButton.setBorderPainted(false);
 		completeButton.setBounds(0, 70, 300, 250);
-		completeButton.addActionListener((ActionListener) this);
+		completeButton.addActionListener((ActionListener) this); // 선택완료버튼 액션 line:272
 		ButtonPanel.add(completeButton);
 
 		JButton eataloneButton = new JButton(new ImageIcon(
@@ -139,13 +139,14 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		eataloneButton.setBorderPainted(false);
 		eataloneButton.setBounds(300, 70, 300, 250);
 		eataloneButton.addActionListener(new ActionListener() {
+
 			@Override
+			// 혼밥버튼 액션
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				Client cli = new Client();
 
 				int uncheckedCount = 0;
-				// TODO Auto-generated method stub
 				for (int i = 0; i < 4; i++) {
 					foodIndex[i] = -1;
 				}
@@ -153,7 +154,6 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 				if (typeOfFood[4].isSelected()) {
 					for (int i = 0; i < 4; i++) {
 						foodIndex[i] = i;
-						// out.println("food" + foodIndex[i]);
 					}
 				}
 
@@ -161,7 +161,6 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 					for (int i = 0, j = 0; i < 4; i++) {
 						if (typeOfFood[i].isSelected()) {
 							foodIndex[j] = i;
-							// out.println("food" + foodIndex[j]);
 							j++;
 
 						} else
@@ -183,9 +182,11 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 				for (int i = 0; i < 4; i++) {
 					System.out.println(foodIndex[i]);
 				}
+
 				priorityIndex = priority.getSelectedIndex();
-				System.out.println("dd" + priorityIndex);
-				cli.eataloneInformimg(foodIndex, priorityIndex);
+				System.out.println("priority: " + priorityIndex);
+				// foodindex와 priorityindex를 eataloneInforming 메소드로 client에게 넘겨줌
+				cli.eataloneInforming(foodIndex, priorityIndex);
 			}
 		});
 
@@ -195,8 +196,8 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		JPanel panel3 = new JPanel();
 		panel3.setSize(700, 830);
 		panel3.setLocation(992, 100);
-		contentPane.add(panel3);
 		panel3.setLayout(null);
+		contentPane.add(panel3);
 
 		// R Panel-선택된 음식종류
 		JLabel Spin = new JLabel(new ImageIcon(
@@ -222,9 +223,6 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		Bpin.setBackground(null);
 		panel3.add(Bpin);
 
-		// JLabel blackR = new JLabel(new ImageIcon(
-		// ((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106,
-		// java.awt.Image.SCALE_SMOOTH)));
 		blackR = new JLabel();
 		blackR.setBounds(175, 250, 350, 105);
 		blackR.setText("");
@@ -248,36 +246,37 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 		restaurant.setLayout(null);
 
 		for (int j = 0; j < 6; j++) {
-	         
-	         yellow[j] = new JLabel();
-	         if (j == 0)
-	         {
-	               yellow[j].setBounds(10, 100, 590, 50);
-	               yellow[j].setFont(new Font("배달의민족 도현", Font.BOLD, 40));
-	         }
-	         else
-	         {
-	            if(j == 5)
-	               yellow[j].setFont(new Font("배달의민족 도현", Font.BOLD, 25));
-	            else
-	               yellow[j].setFont(new Font("배달의민족 도현", Font.BOLD, 30));
-	            yellow[j].setBounds(10, 100 + (37 * j), 590, 100);
-	            }
-	         
-	         
-	            
-	         yellow[j].setHorizontalAlignment(SwingConstants.CENTER);
-	         yellow[j].setBackground(new Color(231, 191, 45));
-	         yellow[0].setBackground(Color.GREEN);
-	         restaurant.add(yellow[j]);
-	      panel3.add(restaurant);
 
-	}}
+			restaurantInfo[j] = new JLabel();
+			if (j == 0) {
+				restaurantInfo[j].setBounds(10, 100, 590, 50);
+				restaurantInfo[j].setFont(new Font("배달의민족 도현", Font.BOLD, 40));
+			} else {
+				if (j == 5)
+					restaurantInfo[j].setFont(new Font("배달의민족 도현", Font.BOLD, 25));
+				else
+					restaurantInfo[j].setFont(new Font("배달의민족 도현", Font.BOLD, 30));
+				restaurantInfo[j].setBounds(10, 100 + (37 * j), 590, 100);
+			}
+
+			restaurantInfo[j].setHorizontalAlignment(SwingConstants.CENTER);
+			restaurantInfo[j].setBackground(new Color(231, 191, 45));
+			restaurantInfo[0].setBackground(Color.GREEN);
+			restaurant.add(restaurantInfo[j]);
+			panel3.add(restaurant);
+		}
+	}
+
+	@Override
+	// 선택완료버튼 액션
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		sendToClient a = new sendToClient();
+	}
 
 	public class sendToClient {
 		sendToClient() {
 			int uncheckedCount = 0;
-			// TODO Auto-generated method stub
 			for (int i = 0; i < 4; i++) {
 				foodIndex[i] = -1;
 			}
@@ -316,16 +315,9 @@ public class To_overcom_HuU extends JFrame implements ActionListener {
 			}
 			priorityIndex = priority.getSelectedIndex();
 			System.out.println("dd" + priorityIndex);
-
+			// foodindex와 priorityindex를 completeInforming 메소드로 client에게 보내줌
 			call.completeInforming(foodIndex, priorityIndex);
 		}
 
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		sendToClient a = new sendToClient();
-	}
 }
-// 아래 괄호 있다...!!!!! 잊지마!!

@@ -17,41 +17,32 @@ public class Client{//, InterruptedException
      
    }
 
-   public void completeInforming(int[] foodIdx, int prioIdx) {
-      // take food type and priority index from To_overcom_HuU as parameter,
-      // and send data to server.
-      out.println("SELECTCOMPLETE");////////////////////////
+   public void completeInforming(int[] foodIdx, int prioIdx) { //선택완료 버튼 눌렀을 때 서버로 보내는 메세지
+      out.println("SELECTCOMPLETE");
       for (int i = 0; i < 4; i++) {
          out.println("food" + foodIdx[i]);
       }
       out.println("priority" + prioIdx);
       out.println("null");
-      /////////// 음..서버 코딩해주기
    }
-   public void eataloneInformimg(int[] foodIdx, int prioIdx) {
-      // take eat alone information from To_overcome_HuU, and send data to
-//      // server
-      System.out.println("test~!!!");
+   public void eataloneInforming(int[] foodIdx, int prioIdx) { //같이드실래요 버튼을 눌렀을 때 서버로 보내는 메세지
       out.println("EATALONE");
       for (int i = 0; i < 4; i++) {
          out.println("food" + foodIdx[i]);
       }
       out.println("priority" + prioIdx);
       out.println("null");
-      /////////// 서버 코딩해주기!!
    }
 
    private void run() throws IOException,InterruptedException {
      chat= new ChatClient();
-    
       Socket socket = new Socket("127.0.0.1", 1121);
-      in = new BufferedReader(new InputStreamReader( // 서버로 부터 읽어오는 input
-                                          // stream
+      in = new BufferedReader(new InputStreamReader( // 서버로 부터 읽어오는 input stream
             socket.getInputStream()));
-      out = new PrintWriter(socket.getOutputStream(), true); // 서버로 데이터를 보내는
+      out = new PrintWriter(socket.getOutputStream(), true); // 서버로 데이터를 보내는 output stream
       String name="";
       String result = "";
-      String T, F , D, D1, D2, D3, D4, D5, D6;
+      String T, F , D;
       
       HuU = new To_overcom_HuU();
       HuU.setVisible(true);
@@ -59,46 +50,48 @@ public class Client{//, InterruptedException
       
 
       while (true) {
-         result = in.readLine();
-         if (result.equals("RESULT")) {
-            System.out.println("ddddd");
+         result = in.readLine(); //서버로 부터 데이터 읽어옴
+         if (result.equals("RESULT")) { //읽어온 값이 RESULT이면
+            System.out.println("result : ");
             T=in.readLine();
             F=in.readLine();
             HuU.blackRec.setText(T);
             HuU.blackR.setText(F);
             for(int i=0;i<6;i++){
                D=in.readLine();
-               HuU.yellow[i].setText(D);
+               HuU.restaurantInfo[i].setText(D);
             }
             
          }
          //chatting
-         else if(result.equals("SUBMITNAME")){
-            System.out.println("8888888");
-            chat.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            chat.frame.setVisible(true);
-              name = chat.getName();
-              chat.textName.setText(name);
-            out.println(name);
-         } else if (result.startsWith("NAMEACCEPTED")) {
-            System.out.println("네임어셉트????");
-            chat.textField.setEditable(true);
-         } else if (result.startsWith("ENTRANCE")) {
-            System.out.println("입장했니?");
-            chat.textName.setEditable(false);
-            text = result.substring(8);
-            chat.messageArea.append("<" +text+ ">" + "님이 입장하셨습니다.\n");
+         else if(result.equals("SUBMITNAME")){ //서버로 부터 읽어온 값이 SUBMITNAME이면
+            chat.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+            chat.frame.setVisible(true); //Chatclient에서 만든 GUI를 보여줌
+            name = chat.getName(); //이름을 입력받음
+            if(name.equals("")){
+            	JOptionPane.showMessageDialog(null, "Please input your name!", "No name",
+						JOptionPane.WARNING_MESSAGE);
+            	name = chat.getName();
+            }
+            chat.textName.setText(name); //이름을 창에 보여줌
+            out.println(name); //서버로 이름을 보내줌
+         } else if (result.startsWith("NAMEACCEPTED")) { //서버로 부터 읽어온 값이 NAMEACCEPT로 시작하면
+            chat.textField.setEditable(true); //textField가 수정가능하게 바꿈
+         } else if (result.startsWith("ENTRANCE")) {  //서버로 부터 읽어온 값이 ENTRANCE로 시작하면
+            chat.textName.setEditable(false); //이제 textField 수정못하게 바꿈
+            text = result.substring(8); // ENTRANCE 뒤부터 메세지이기 때문에 
+            chat.messageArea.append("<" +text+ ">" + "님이 입장하셨습니다.\n"); //messageArea에 메세지를 보여줌
             
-         } else if (result.startsWith("WHISPER")) {
-            
-            text = result.substring(7);
-            chat.messageArea.append(text+"\n");//////////////////
-         } else if (result.startsWith("MESSAGE")) {
-            text = result.substring(8);
-            chat.messageArea.append(text+"\n");
+         } else if (result.startsWith("WHISPER")) {   //서버로 부터 읽어온 값이 WHISPER로 시작하면
+            text = result.substring(7); // WHISPER 뒤부터 메세지이기 때문에 
+            chat.messageArea.append(text);//messageArea에 메세지를 보여줌
+         } else if (result.startsWith("MESSAGE")) {//서버로 부터 읽어온 값이 MESSAGE로 시작하면
+            text = result.substring(8); // MESSAGE 뒤부터 메세지이기 때문에 
+            chat.messageArea.append(text+"\n"); //messageArea에 메세지를 보여줌
          } else if (result.startsWith("EXIT")) {
-            text = result.substring(4);
-            chat.messageArea.append("<" +text+ ">" + "님이 나가셨습니다.\n");
+            
+            text = result.substring(4); // EXIT 뒤부터 이름이기 때문에 
+            chat.messageArea.append("<" +text+ ">" + "님이 나가셨습니다.\n"); //messageArea에 메세지를 보여줌
          }
          
       }
@@ -106,7 +99,7 @@ public class Client{//, InterruptedException
    }
 
    public static void main(String[] args) throws Exception {
-      Client client = new Client();
+      Client client = new Client(); 
       client.run();
    }
 }
