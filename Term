@@ -1,0 +1,671 @@
+
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+
+
+public class ChatClient{
+   String name="";
+    BufferedReader in;
+    PrintWriter out;
+    JFrame frame = new JFrame("혼밥러 채팅창");
+    JTextField textField = new JTextField();
+    JTextField textName = new JTextField();
+    JTextArea messageArea;
+    JPanel panel;
+    Image nameImage = new ImageIcon("img/카와이샐리.png").getImage().getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH);
+    Image img = new ImageIcon("img/치킨샐리.jpg").getImage().getScaledInstance(470, 500, java.awt.Image.SCALE_SMOOTH);
+    String other="";
+  
+    
+    public ChatClient()
+    {
+    	messageArea = new JTextArea(){
+    		{setOpaque(false);}
+    		public void paint(Graphics g){
+    			g.drawImage(img, 0, 0, this);
+    			super.paint(g);
+    		}
+    	};
+    	
+    	panel = new JPanel(){
+    		{setOpaque(false);}
+    		public void paint(Graphics g){
+    			g.drawImage(nameImage, 0, 0, this);
+    			super.paint(g);
+    		}
+    	};
+    	
+    	frame.getContentPane().setBackground(new Color(79,54,29));
+    	JButton b1 = new JButton(new ImageIcon(
+                ((new ImageIcon("img/전송.png")).getImage()).getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH)));
+    	JButton whisper = new JButton(new ImageIcon(
+                ((new ImageIcon("img/귓속말.png")).getImage()).getScaledInstance(80, 35, java.awt.Image.SCALE_SMOOTH)));
+        //b1.setBackground(new Color(254,230,251));
+    	JButton b2 = new JButton(new ImageIcon(
+                ((new ImageIcon("img/exit.png")).getImage()).getScaledInstance(80, 55, java.awt.Image.SCALE_SMOOTH)));
+       // b2.setBackground(Color.lightGray);
+        whisper.setBackground(new Color(225,219,249));
+        // Layout GUI
+        
+        textField.setEditable(false);//textField를 직은 사용하지 못하게 false값으로 초기화한다.
+        messageArea.setEditable(false);//messageArea를 아직은 사용하지 못하게 false값으로 초기화한다.
+        
+        frame.setLayout(null);
+        frame.setBounds(10, 10, 500, 600);
+        textName.setBounds(70,10,300,35);
+        textName.setBackground(new Color(79,54,29));
+        textName.setForeground(Color.white);
+        textName.setBorder(BorderFactory.createLineBorder(new Color(0,0,0,0)));
+        textField.setBounds(10, 510, 335, 35);
+        panel.setBounds(15, 10, 35, 35);
+        textField.setBackground(new Color(255,255,255));
+        textField.setBorder(BorderFactory.createLineBorder(new Color(0,0,0,0)));
+        frame.getContentPane().add(textField); // textField를 생성한다.
+        frame.getContentPane().add(textName);
+        frame.getContentPane().add(panel);
+        textField.setFont(new Font("배달의민족 주아",Font.PLAIN,15));
+        textName.setFont(new Font("배달의민족 주아",Font.PLAIN,25));
+        b1.setBounds(350, 510, 35, 35);
+        b1.setBorder(BorderFactory.createLineBorder(new Color(0,0,0,0)));
+        b2.setBorder(BorderFactory.createLineBorder(new Color(0,0,0,0)));
+        whisper.setBorder(BorderFactory.createLineBorder(new Color(0,0,0,0)));
+        messageArea.setBorder(BorderFactory.createLineBorder(new Color(0,0,0,0)));
+        b1.setOpaque(false);
+        //b1.setBackground(new Color(0,0,0,0));
+   
+        frame.getContentPane().add(b1); 
+        //b1.setFont(new Font("배달의민족 한나",Font.PLAIN,15));
+        b2.setBounds(390, 10, 80, 25);
+      
+        b2.setBackground(new Color(255,255,255));
+        frame.getContentPane().add(b2); 
+        //b2.setFont(new Font("배달의민족 한나",Font.PLAIN,15));
+        //whisper.setBounds(390, 10, 80, 25);
+        whisper.setBounds(390, 510, 80, 35);
+        frame.getContentPane().add(whisper);//whisper button을 추가한다.
+        //whisper.setFont(new Font("배달의민족 한나",Font.PLAIN,15));
+        messageArea.setBounds(5,30,470,500);
+
+        messageArea.setFont(new Font("배달의민족 주아",Font.PLAIN,15));
+        JScrollPane scroll = new JScrollPane(messageArea);
+        scroll.setBounds(15, 50, 450, 450);
+        frame.getContentPane().add(scroll);
+     
+       
+
+        // Add Listeners
+        textField.addActionListener(new ActionListener() { 
+        	
+            public void actionPerformed(ActionEvent e) 
+            {
+           
+                out.println(textField.getText());//textField에 입력을 받아서 서버로 보낸다.
+                textField.setText("");
+            }
+            
+        });
+        
+        b2.addActionListener(new ActionListener(){
+        	
+        	public void actionPerformed(ActionEvent e)
+        	{
+        		System.exit(0);
+        	}
+   
+        });
+        
+        b1.addActionListener(new ActionListener(){
+        	
+        	public void actionPerformed(ActionEvent e)
+        	{
+        		out.println(textField.getText());//textField에 입력을 받아서 서버로 보낸다.
+                textField.setText("");
+        	}
+        });
+       
+        whisper.addActionListener(new ActionListener(){
+           
+            public void actionPerformed(ActionEvent e) 
+             {
+            	other = sendWhisper(); //sendWhisper함수를 호출해서 귓속말을 보낼 사람의 이름을 입력받아서 other에 저장한다.
+                 out.println(other+"@"+textField.getText()); // "귓속말 받을 사람의 이름@message" format으로 서버로 보낸다. 
+                 textField.setText("");
+             }
+        });
+    }
+    
+    
+    /*private String getServerAddress() 
+    {
+        return JOptionPane.showInputDialog(
+            frame,
+            "Enter IP Address of the Server:",
+            "Welcome to the Chatter",
+            JOptionPane.QUESTION_MESSAGE); //ip address를 입력받음
+    }
+*/
+   
+    private String getName() 
+    {
+        return JOptionPane.showInputDialog(
+            frame,
+            "Choose a screen name:",
+            "Screen name selection",
+            JOptionPane.PLAIN_MESSAGE); //클라이언트의 이름을 입력받음
+    }
+
+   private String sendWhisper()
+   {
+      return JOptionPane.showInputDialog(
+               frame,
+               "Who will you spend the WHISPER message?",
+               "",
+               JOptionPane.PLAIN_MESSAGE); //귓속말을 보낼 상대의 이름을 입력받음
+   }
+    private void run() throws IOException 
+    {
+
+        Socket socket = new Socket("127.0.0.1", 1121);
+        in = new BufferedReader(new InputStreamReader( //서버로 부터 읽어오는 input stream
+            socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true); //서버로 데이터를 보내는 output stream
+        
+     
+        while (true) 
+        {
+            String line = in.readLine(); //서버로부터 데이터를 읽어와서 line string에 저장함
+            if (line.startsWith("SUBMITNAME")) //서버로부터 읽어온 데이터가 SUBMITNAME으로 시작하면
+            {
+               name = getName(); // getName()함수를 호출해서 클라이언트의 이름을 입력받음
+               textName.setText(name);
+                out.println(name); // 입력 받은 이름을 서버에 보내줌
+             
+            } 
+            else if (line.startsWith("NAMEACCEPTED")) //서버로부터 읽어온 데이터가 NAMEACCEPTED로 시작하면
+            {
+                textField.setEditable(true); //이제 textField가 수정 가능해짐
+            } 
+            else if(line.startsWith("ENTRANCE"))//서버로부터 읽어온 데이터가 ENTRANCE로 시작하면
+            {
+               messageArea.append("<"+line.substring(8)+">"+"님이 입장하셨습니다.\n"); //읽어온 데이터의 8글자 뒤부터가 이름이기 때문에 messageArea에 <name> ENTRANCE란 메세지를 첨부한다. 
+               
+            }
+            else if(line.startsWith("WHISPER")) //서버로부터 읽어온 데이터가 WHISPER로 시작하면
+            {
+            	
+            	messageArea.append(line.substring(7)+"\n");//읽어온 데이터의 7글자 뒤부터가 "보내는 사람의 이름: message" format이기 때문에 messageArea에 첨부한다.
+            }
+            else if (line.startsWith("MESSAGE")) 
+            {
+                messageArea.append(line.substring(8) + "\n"); //읽어온 데이터의 8글자 뒤부터가 message이기 때문에 messageArea에 첨부한다.
+            }
+            else if(line.startsWith("EXIT")) //서버로부터 읽어온 데이터가 EXIT로 시작하면
+            {
+            	messageArea.append("<"+line.substring(4)+">"+"님이 나가셨습니다."+"\n"); //읽어온 데이터의 4글자 뒤부터가 종료하는 클라이언트의 name이기 때문에 messageArea에 첨부한다.
+            }
+        } 
+           
+    }
+
+   
+    public static void main(String[] args) throws Exception 
+    {
+ 
+        ChatClient client = new ChatClient();
+        client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        client.frame.setVisible(true);
+        client.run();
+    }
+}
+
+
+import java.util.Iterator;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+public class Server {
+
+   
+    private static final int PORT = 1121;//서버가 사용하는 포트
+
+    private static  ArrayList<String> names = new  ArrayList<String>();
+    private static  ArrayList<PrintWriter> writers = new  ArrayList<PrintWriter>();
+
+    public static void main(String[] args) throws Exception 
+    {
+        System.out.println("The Server is running.");
+        ServerSocket listener = new ServerSocket(PORT);
+        try 
+        {
+            while (true)
+            {
+                new Handler(listener.accept()).start();
+            }
+        } finally 
+        {
+            listener.close();
+        }
+    }
+
+    private static class Handler extends Thread
+    {
+    	private String exit_name;
+        private String name;
+        private Socket socket;
+        private BufferedReader in; //클라이언트로부터 데이터를 수신받기 위한
+        private PrintWriter out; //클라이언트에게 데이터를 내보내기 위한
+        
+        public Handler(Socket socket) 
+        {
+            this.socket = socket;
+        }
+
+        public void run() 
+        {
+        	try 
+            {
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(socket.getOutputStream(), true);
+                
+        	 while (true)
+             {
+             	String input2 = in.readLine();
+             	if (input2 == null) //만약 input값이 null이면
+                 {
+                     return;//리턴
+                 }
+             	if(input2.startsWith("food"))
+          	   {
+          		  
+          		   //디비로 연동해서 food 선택
+          		 //음식 서버에 저장해놓고
+          		
+          	   }
+          	   else if(input2.startsWith("priority"))
+          	   {
+          		   //디비로 연동해서 우선순위 ㅇㅇ
+          		 //우선순위 정해지면 out.println("selected"+선택된 음식정보); 해서 보내줌
+          	   }
+             }
+  
+        /*{
+            try 
+            {
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(socket.getOutputStream(), true);
+                
+               
+                
+                while (true) 
+                {
+                    out.println("SUBMITNAME"); //클라이언트에게 SUBMITNAME이란 메세지를 보냄
+                    name = in.readLine(); // 클라이언트로 부터 받은 이름을 name에 저장함 
+                    if (name == null) //만약에 name이 null이면
+                    {
+                        return; //리턴
+                    }
+                    synchronized (names) //names Array list 동기화
+                    {
+                        if (!names.contains(name)) //names Array list에 name이 없으면
+                        {
+                            names.add(name); //names Array list에 name을 추가한다.
+                            break;
+                        }
+                    }
+                    
+                }
+                out.println("NAMEACCEPTED"); //while문을 빠져나오면 클라이언트에게 NAMEACCEPTED라는 메세지를 보냄
+                writers.add(out); //writers Array list에 out을 추가함 -> broadcast를 위한
+                
+                for (PrintWriter writer : writers) //writer Array list에 있는 모든 writers들에 대해
+                {
+                    writer.println("ENTRANCE"+name); //ENTRANCE 메세지와 이름을 클라이언트에게 전송함
+                }
+               
+                while (true)
+                {
+                   String input = in.readLine();//클라이언트로부터 받은 채팅 내용을 input에 저장한다.
+                   if (input == null) //만약 input값이 null이면
+                    {
+                        return;//리턴
+                    }
+                   
+                   String tok[] = input.split("@"); //input값을 @기준으로 나눠서 tok array에 저장한다.
+
+                   if(tok.length>1) //만약에 tok array의 길이가 1이상이면 ->귓속말
+                   {
+                      for(int i=0; i<writers.size(); i++) //writers Array의 크기만큼 i를 for loop 돌린다.
+                       {
+                          if(tok[0].equals(names.get(i))) //만약 이름인 tok[0]과 같은 string이 names Array list에 있으면 
+                          {
+                             writers.get(i).println("WHISPER" + name + ": " + tok[1]); //그 i번째 이름의 클라이언트에게 "WHISPER name: message" format으로 데이터를 보낸다.
+                          }
+                       }
+                   }
+                   else
+                   {
+                	   
+                		   for (PrintWriter writer : writers) //writer Array list에 있는 모든 writers들에 대해
+                       {
+                		   writer.println("MESSAGE " + name + ": " + input); //모든 클라이언트들에게 "MESSAGE name: message" format으로 데이터를 보낸다.
+                       }
+                	  
+                   }
+                  
+                }
+                
+            } catch (IOException e) 
+            {
+                
+                System.out.println(e);
+            } 
+            finally 
+            {
+                if (name != null) //네임이 null값이 아니면
+                {
+                	exit_name = name; //name을 exit_name에 저장시킨다.
+                    names.remove(name); //names Array list에서 종료된 클라이언트의 name을 삭제한다.
+                }
+                if (out != null) 
+                {
+                   
+                    writers.remove(out); //writers Array list에서 종료된 클라이언트의 out을 삭제한다.
+                }
+                try {
+                    socket.close(); //소켓을 종료시킨다.
+                    for (PrintWriter writer : writers) // writer Array list에 있는 모든 writer들에 대해
+                	{
+                		writer.println("EXIT"+ exit_name); //모든 클라이언트들에게 "EXIT 종료한 클라이언트의 이름" format으로 데이터를 전송한다.
+                	}
+                } catch (IOException e) 
+                {
+                	
+                }
+            }
+        }*/
+    }
+}
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+import javax.swing.*;
+import javax.swing.border.*;
+
+public class To_overcom_HuU extends JFrame  implements ActionListener{
+   JCheckBox[] typeOfFood = new JCheckBox[5];
+   JComboBox priority = new JComboBox();
+   private JPanel contentPane;
+   BufferedReader in;
+   PrintWriter out;
+   int[] foodIndex = { -1, -1, -1, -1 };
+   int priorityIndex =-1;
+   
+   public To_overcom_HuU() {
+      Font font;
+
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setBounds(0, 0, 1900, 1000);
+      contentPane = new JPanel() {
+         Image bg = new ImageIcon("배경.png").getImage();
+
+         @Override
+         public void paintComponent(Graphics g) {
+            g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
+         }
+      };
+      contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+      setContentPane(contentPane);
+      contentPane.setLayout(null);
+
+      // left panel(음식종류,음식,가격제한선)
+      JPanel leftPanel = new JPanel();
+      leftPanel.setLayout(null);
+      leftPanel.setBounds(170, 100, 700, 830);
+      contentPane.add(leftPanel);
+
+      // 음식종류      
+      JPanel foodtypePanel = new JPanel();
+      foodtypePanel.setBackground(new Color(102, 153, 0, 150));
+      font = new Font("함초롬돋움", Font.BOLD, 40);
+      LineBorder border = new LineBorder(new Color(0, 0, 0, 0), 3, true);
+      foodtypePanel
+            .setBorder(new TitledBorder(border, "음식종류", TitledBorder.CENTER, TitledBorder.TOP, font, Color.black));// border자리에원래UIManager.getBorder("TitledBorder.border")
+      foodtypePanel.setBounds(50, 50, 600, 150);
+      foodtypePanel.setLayout(null);
+      leftPanel.add(foodtypePanel);
+      String[] typeoffood = { "한식", "중식", "일식", "분식", "전체" };
+      int i = 0;
+      for (i = 0; i < 5; i++) {
+         typeOfFood[i] = new JCheckBox(typeoffood[i]);
+         typeOfFood[i].setBounds(50 + (90 + 10) * i, 80, 90, 50);
+         typeOfFood[i].setBorderPainted(true);
+         typeOfFood[i].setFont(new Font("함초롬돋움", Font.CENTER_BASELINE, 30));
+         typeOfFood[i].setBackground(new Color(250, 250, 250, 250));
+         foodtypePanel.add(typeOfFood[i]);
+      }
+   
+      
+      
+      
+
+      // 우선순위
+      JPanel priorityPanel = new JPanel();
+      priorityPanel.setBackground(new Color(0x8FBC8F));
+      priorityPanel
+            .setBorder(new TitledBorder(border, "우선순위", TitledBorder.CENTER, TitledBorder.TOP, font, Color.black));
+      priorityPanel.setBounds(50, 250, 600, 150);
+      priorityPanel.setLayout(null);
+
+      priority.setBackground(Color.white);
+      priority.setBounds(200, 70, 200, 60);
+      priority.setEditable(false);
+      priority.setModel(new DefaultComboBoxModel(new String[] { "선택하세요", "추천순", "거리순", "가격순" }));
+      priority.setFont(new Font("한초롬돋움", Font.PLAIN, 30));
+      priority.setSelectedIndex(0);
+      priority.setMaximumRowCount(4);
+      priority.setForeground(new Color(0, 0, 0));
+      priorityPanel.add(priority);
+
+      leftPanel.add(priorityPanel);
+
+      // 선택완료 & 혼밥 버튼패널
+      JPanel ButtonPanel = new JPanel();
+      ButtonPanel.setBackground(new Color(0xEAEAEA));
+      ButtonPanel.setLayout(null);
+      ButtonPanel.setBounds(50, 400, 600, 400);
+      leftPanel.add(ButtonPanel);
+
+      JPanel completePanel = new JPanel();
+      completePanel.setLayout(null);
+      completePanel.setBounds(0, 0, 300, 400);
+      completePanel.setBackground(new Color(3, 3, 3, 0));
+      completePanel.setOpaque(false);
+
+      JButton completeButton = new JButton(new ImageIcon(
+            ((new ImageIcon("선택완료샐리.png")).getImage()).getScaledInstance(250, 200, java.awt.Image.SCALE_SMOOTH)));
+      completeButton.setOpaque(false);
+      completeButton.setBackground(new Color(0, 0, 0, 0));
+      completeButton.setBorderPainted(false);
+      completeButton.setBounds(0, 50, 300, 250);
+      completeButton.addActionListener((ActionListener) this);
+//      completeButton.addActionListener();
+//      completeButton.setActionCommand(Integer.toString(1));
+//      button[i].addActionListener(this);//new CreatePersonButtonListener()
+      JLabel completeLabel = new JLabel(new ImageIcon(
+            ((new ImageIcon("선택완료라벨.png")).getImage()).getScaledInstance(250, 80, java.awt.Image.SCALE_SMOOTH)));
+      completeLabel.setBounds(0, 300, 300, 80);
+      completePanel.add(completeButton);
+      completePanel.add(completeLabel);
+      ButtonPanel.add(completePanel);
+
+      
+      
+      // 혼밥버튼패널(버튼+라벨)
+      JPanel eat_alone = new JPanel();
+      eat_alone.setLayout(null);
+      eat_alone.setBounds(300, 0, 300, 470);
+      eat_alone.setBackground(new Color(3, 3, 3, 0));
+      eat_alone.setOpaque(false);
+
+      JButton eataloneButton = new JButton(new ImageIcon(
+            ((new ImageIcon("혼밥샐리.png")).getImage()).getScaledInstance(250, 200, java.awt.Image.SCALE_SMOOTH)));
+      eataloneButton.setOpaque(false);
+      eataloneButton.setBackground(new Color(0, 0, 0, 0));
+      eataloneButton.setBorderPainted(false);
+      eataloneButton.setBounds(0, 50, 300, 250);
+      JLabel btLabel = new JLabel(new ImageIcon(
+            ((new ImageIcon("혼밥라벨.png")).getImage()).getScaledInstance(250, 80, java.awt.Image.SCALE_SMOOTH)));
+      btLabel.setBounds(0, 300, 300, 80);
+      eat_alone.add(eataloneButton);
+      eat_alone.add(btLabel);
+      ButtonPanel.add(eat_alone);
+
+      
+      
+      
+      // Right Panel(선택된 음식종류, 선택된 음식, 식당정보)
+      JPanel panel3 = new JPanel();
+      panel3.setSize(700, 830);
+      panel3.setLocation(992, 100);
+      contentPane.add(panel3);
+      panel3.setLayout(null);
+
+      // 선택된 음식종류
+      JPanel selectedFoodtype = new JPanel();
+      selectedFoodtype.setBounds(87, 50, 522, 150);
+      panel3.add(selectedFoodtype);
+      selectedFoodtype.setLayout(null);
+
+      JLabel redTr = new JLabel(new ImageIcon(
+            ((new ImageIcon("그림2.png")).getImage()).getScaledInstance(80, 60, java.awt.Image.SCALE_SMOOTH)));
+      redTr.setBounds(196, 0, 154, 44);
+      redTr.setBackground(null);
+      selectedFoodtype.add(redTr);
+
+      JLabel blackRec = new JLabel(new ImageIcon(
+            ((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+      blackRec.setBounds(96, 40, 347, 106);
+      selectedFoodtype.add(blackRec);
+
+      // 선택된 음식
+      JPanel selectedFood = new JPanel();
+      selectedFood.setBounds(87, 230, 522, 150);
+      panel3.add(selectedFood);
+      selectedFood.setLayout(null);
+
+      JLabel redT = new JLabel(new ImageIcon(
+            ((new ImageIcon("그림2.png")).getImage()).getScaledInstance(80, 60, java.awt.Image.SCALE_SMOOTH)));
+      redT.setBounds(201, 0, 154, 44);
+      redT.setBackground(null);
+      selectedFood.add(redT);
+
+      JLabel blackR = new JLabel(new ImageIcon(
+            ((new ImageIcon("그림3.png")).getImage()).getScaledInstance(347, 106, java.awt.Image.SCALE_SMOOTH)));
+      blackR.setBounds(96, 40, 347, 106);
+      selectedFood.add(blackR);
+
+      // 식당정보
+      JPanel restaurant = new JPanel() {
+         Image bg = new ImageIcon("그림1.png").getImage();
+
+         @Override
+         public void paintComponent(Graphics g) {
+            g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
+         }
+      };
+      restaurant.setBounds(47, 400, 600, 400);
+      panel3.add(restaurant);
+   }
+   
+   public void actionPerformed(ActionEvent e) {
+	      // TODO Auto-generated method stub
+	      if (typeOfFood[4].isSelected()) {
+	    	  foodIndex[0] = 4;
+	    	  out.println("food"+foodIndex[0]);
+	         return;
+	      }
+	      
+	      priorityIndex = priority.getSelectedIndex();
+	      out.println("priority"+priorityIndex);
+	      System.out.println("dd"+priorityIndex);
+	      
+	      for (int i = 0, j = 0; i < 4; i++) {
+	         if (typeOfFood[i].isSelected()) {
+	        	 foodIndex[j] = i;
+	        	 out.println("food"+foodIndex[j]);
+	            j++;
+	            
+	         }
+	      }
+	      for (int i = 0; i < 4; i++) {
+	         System.out.println("food"+foodIndex[i]);
+	      }
+
+	      return;
+
+}
+   private void run() throws IOException
+   {
+	   Socket socket = new Socket("127.0.0.1", 1121);
+       in = new BufferedReader(new InputStreamReader( //서버로 부터 읽어오는 input stream
+           socket.getInputStream()));
+       out = new PrintWriter(socket.getOutputStream(), true); //서버로 데이터를 보내는 output stream
+       
+       while(true)
+       {
+    	   String line = in.readLine(); //서버로부터 데이터를 읽어와서 line string에 저장함
+           if (line.startsWith("selected")) 
+           {
+             //창에 보여줌
+           } 
+       }
+   }
+   public static void main(String[] args) throws Exception 
+   {
+
+	   To_overcom_HuU client = new To_overcom_HuU();
+	   EventQueue.invokeLater(new Runnable() 
+		{
+			public void run() {
+				try {
+					client.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+       client.run();
+   }
+}
